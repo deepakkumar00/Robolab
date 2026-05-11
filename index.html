@@ -11,94 +11,80 @@
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
 
-    /* ── Setup ── */
     #setup-screen {
       min-height: 100vh;
       display: flex; align-items: center; justify-content: center; padding: 20px;
     }
     .setup-card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
       border-radius: 16px; padding: 40px; max-width: 500px; width: 100%;
     }
     .setup-card h1 {
       font-family: 'Space Mono', monospace;
       font-size: 20px; color: #00ff88; letter-spacing: 2px; margin-bottom: 4px;
     }
-    .setup-card .tagline {
+    .tagline {
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px; color: #333; letter-spacing: 3px; margin-bottom: 32px;
+      font-size: 10px; color: #333; letter-spacing: 3px; margin-bottom: 28px;
     }
-    .setup-card label {
-      display: block; font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px; color: #555; letter-spacing: 2px; margin-bottom: 8px;
-    }
-    .setup-card input {
-      width: 100%; background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
-      padding: 12px 16px; color: #fff;
-      font-family: 'IBM Plex Mono', monospace; font-size: 13px;
-      outline: none; margin-bottom: 10px; transition: border-color 0.2s;
-    }
-    .setup-card input:focus { border-color: #00ff88; }
-    .setup-hint {
-      font-family: 'IBM Plex Mono', monospace; font-size: 11px;
-      color: #333; line-height: 1.8; margin-bottom: 28px;
-    }
-    .setup-hint a { color: #00ff88; text-decoration: none; }
-    .setup-hint a:hover { text-decoration: underline; }
     .steps {
       background: rgba(0,255,136,0.04); border: 1px solid rgba(0,255,136,0.1);
       border-radius: 10px; padding: 16px 18px; margin-bottom: 24px;
     }
     .steps p {
       font-family: 'IBM Plex Mono', monospace; font-size: 11px;
-      color: #555; line-height: 2; margin: 0;
+      color: #555; line-height: 2.2; margin: 0;
     }
-    .steps p span { color: #00ff88; }
+    .steps a { color: #00ff88; text-decoration: none; }
+    .steps span { color: #00ff88; }
+    label {
+      display: block; font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px; color: #555; letter-spacing: 2px; margin-bottom: 8px;
+    }
+    input[type=password], input[type=text] {
+      width: 100%; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+      padding: 12px 16px; color: #fff;
+      font-family: 'IBM Plex Mono', monospace; font-size: 13px;
+      outline: none; margin-bottom: 20px; transition: border-color 0.2s;
+    }
+    input:focus { border-color: #00ff88; }
+    .hint {
+      font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+      color: #2a2a2a; line-height: 1.8; margin-bottom: 24px;
+    }
     .btn-launch {
       background: #00ff88; color: #000; border: none; border-radius: 8px;
       padding: 13px 24px; font-family: 'IBM Plex Mono', monospace;
       font-size: 13px; font-weight: 700; cursor: pointer;
-      letter-spacing: 1px; width: 100%; transition: background 0.2s;
+      letter-spacing: 1px; width: 100%;
     }
     .btn-launch:hover { background: #00e67a; }
-    .error-msg {
+    .setup-err {
       font-family: 'IBM Plex Mono', monospace; font-size: 12px;
-      color: #ff4444; margin-top: 10px; min-height: 18px;
+      color: #ff4444; margin-top: 12px; min-height: 18px; line-height: 1.5;
     }
 
-    /* ── App ── */
     #app { display: none; height: 100vh; flex-direction: column; }
 
     .header {
       border-bottom: 1px solid rgba(255,255,255,0.07);
-      padding: 14px 24px;
-      display: flex; align-items: center; justify-content: space-between;
-      background: rgba(10,10,15,0.97);
-      position: sticky; top: 0; z-index: 10;
+      padding: 14px 24px; display: flex; align-items: center; justify-content: space-between;
+      background: rgba(10,10,15,0.97); position: sticky; top: 0; z-index: 10;
     }
-    .header h1 {
-      font-family: 'Space Mono', monospace;
-      font-size: 16px; color: #00ff88; letter-spacing: 2px;
-    }
-    .header .sub {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px; color: #222; letter-spacing: 3px; margin-top: 2px;
-    }
+    .header h1 { font-family: 'Space Mono', monospace; font-size: 16px; color: #00ff88; letter-spacing: 2px; }
+    .header .sub { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #222; letter-spacing: 3px; margin-top: 2px; }
     .header-right { display: flex; align-items: center; gap: 12px; }
-    .model-badge {
-      font-family: 'IBM Plex Mono', monospace; font-size: 10px;
-      color: #333; border: 1px solid #1a1a1a; border-radius: 6px;
-      padding: 5px 10px;
+    .badge {
+      font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #333;
+      border: 1px solid #1a1a1a; border-radius: 6px; padding: 5px 10px;
     }
     .tabs { display: flex; gap: 8px; }
     .tab-btn {
       background: transparent; color: #444;
       border: 1px solid rgba(255,255,255,0.07); border-radius: 6px;
       padding: 7px 16px; font-family: 'IBM Plex Mono', monospace;
-      font-size: 12px; font-weight: 700; cursor: pointer;
-      letter-spacing: 1px; transition: all 0.2s;
+      font-size: 12px; font-weight: 700; cursor: pointer; letter-spacing: 1px; transition: all 0.2s;
     }
     .tab-btn.active { background: #00ff88; color: #000; border-color: #00ff88; }
 
@@ -108,23 +94,16 @@
       width: 205px; border-right: 1px solid rgba(255,255,255,0.05);
       padding: 18px 8px; overflow-y: auto; flex-shrink: 0;
     }
-    .sidebar-label {
-      font-family: 'IBM Plex Mono', monospace; font-size: 9px;
-      color: #222; letter-spacing: 3px; margin: 0 0 12px 8px;
-    }
+    .sidebar-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #222; letter-spacing: 3px; margin: 0 0 12px 8px; }
     .cat-btn {
-      display: flex; align-items: center; gap: 8px;
-      width: 100%; background: transparent; border: 1px solid transparent;
+      display: flex; align-items: center; gap: 8px; width: 100%;
+      background: transparent; border: 1px solid transparent;
       border-radius: 8px; padding: 9px 10px; cursor: pointer;
       text-align: left; margin-bottom: 3px; transition: all 0.15s;
     }
-    .cat-label {
-      font-family: 'IBM Plex Mono', monospace; font-size: 10px;
-      color: #444; line-height: 1.4;
-    }
+    .cat-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #444; line-height: 1.4; }
 
     .content { flex: 1; overflow-y: auto; padding: 22px 26px; }
-
     .content-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
     .content-header h2 { font-family: 'Space Mono', monospace; font-size: 15px; margin-bottom: 2px; }
     .content-sub { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #222; letter-spacing: 2px; }
@@ -134,37 +113,41 @@
       font-family: 'IBM Plex Mono', monospace; font-size: 13px;
       font-weight: 700; cursor: pointer; letter-spacing: 1px;
     }
-    .refresh-btn {
-      background: transparent; border-radius: 8px; padding: 8px 16px;
-      font-family: 'IBM Plex Mono', monospace; font-size: 11px;
-      cursor: pointer; margin-top: 8px; transition: opacity 0.2s;
-    }
     .loading-text {
       font-family: 'IBM Plex Mono', monospace; font-size: 13px;
       padding: 16px 0; animation: pulse 1.2s infinite;
     }
-    .err { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #ff4444; }
+    .err { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #ff4444; margin-bottom: 12px; }
 
+    /* Feed cards */
     .feed-card {
-      background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
       border-radius: 10px; padding: 13px 16px;
-      cursor: pointer; margin-bottom: 9px; transition: background 0.2s;
+      margin-bottom: 9px; transition: background 0.2s;
     }
     .feed-card:hover { background: rgba(255,255,255,0.05); }
     .card-row { display: flex; justify-content: space-between; align-items: flex-start; }
     .card-title { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #ddd; line-height: 1.5; flex: 1; }
-    .card-toggle { font-size: 10px; margin-left: 10px; flex-shrink: 0; }
-    .card-source { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #2a2a2a; margin-top: 4px; }
-    .card-body { margin-top: 10px; display: none; }
-    .card-summary { font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; color: #aaa; line-height: 1.7; }
-    .card-relevance { font-family: 'IBM Plex Mono', monospace; font-size: 11px; line-height: 1.5; margin-top: 8px; }
+    .card-title a { color: #ddd; text-decoration: none; }
+    .card-title a:hover { color: #fff; text-decoration: underline; }
+    .card-meta { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #2a2a2a; margin-top: 4px; }
+    .card-summary { font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; color: #aaa; line-height: 1.7; margin-top: 8px; }
+    .card-insight { font-family: 'IBM Plex Mono', monospace; font-size: 11px; line-height: 1.5; margin-top: 8px; }
+    .toggle-btn {
+      background: transparent; border: none; cursor: pointer;
+      font-size: 10px; margin-left: 10px; flex-shrink: 0; padding: 2px;
+    }
+    .refresh-btn {
+      background: transparent; border-radius: 8px; padding: 8px 16px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+      cursor: pointer; margin-top: 8px;
+    }
 
     /* RAG */
     .rag-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #444; letter-spacing: 3px; margin-bottom: 12px; }
     .upload-area {
       border: 1px dashed rgba(255,255,255,0.12); border-radius: 10px;
-      padding: 22px; text-align: center; cursor: pointer; transition: border-color 0.2s;
+      padding: 22px; text-align: center; cursor: pointer; transition: border-color 0.2s; margin-bottom: 6px;
     }
     .upload-area:hover { border-color: #00ff88; }
     .upload-icon { font-size: 26px; margin-bottom: 8px; }
@@ -176,12 +159,11 @@
       border-radius: 8px; padding: 10px 14px; margin-bottom: 8px;
     }
     .doc-name { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #00ff88; }
-    .doc-meta { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #2a2a2a; margin-top: 3px; }
+    .doc-meta2 { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #2a2a2a; margin-top: 3px; }
     .del-btn {
-      background: transparent; color: #ff4444;
-      border: 1px solid rgba(255,68,68,0.2); border-radius: 6px;
-      padding: 4px 10px; font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px; cursor: pointer;
+      background: transparent; color: #ff4444; border: 1px solid rgba(255,68,68,0.2);
+      border-radius: 6px; padding: 4px 10px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 10px; cursor: pointer;
     }
     .search-row { display: flex; gap: 10px; margin-bottom: 16px; }
     .search-input {
@@ -201,8 +183,8 @@
       border-radius: 10px; padding: 18px 20px;
     }
     .result-label {
-      font-family: 'IBM Plex Mono', monospace; font-size: 10px;
-      color: #00cfff; letter-spacing: 2px; margin-bottom: 12px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #00cfff;
+      letter-spacing: 2px; margin-bottom: 12px;
       display: flex; justify-content: space-between; align-items: center;
     }
     .result-meta { font-size: 10px; color: #2a2a2a; }
@@ -211,8 +193,7 @@
       color: #ddd; line-height: 1.85; white-space: pre-wrap;
     }
     .result-sources {
-      margin-top: 14px; padding-top: 12px;
-      border-top: 1px solid rgba(255,255,255,0.05);
+      margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05);
       font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #333;
     }
 
@@ -223,7 +204,7 @@
 </head>
 <body>
 
-<!-- ── Setup Screen ─────────────────────────────────────────────────────── -->
+<!-- ── Setup ────────────────────────────────────────────────────────────── -->
 <div id="setup-screen">
   <div class="setup-card">
     <h1>ROBOLAB_INTEL</h1>
@@ -231,26 +212,27 @@
 
     <div class="steps">
       <p>
-        <span>Step 1 →</span> Go to <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#00ff88">aistudio.google.com/app/apikey</a><br/>
-        <span>Step 2 →</span> Click "Create API Key" — no card needed, completely free<br/>
-        <span>Step 3 →</span> Copy and paste it below
+        <span>Step 1 →</span> Go to <a href="https://console.groq.com/keys" target="_blank">console.groq.com/keys</a><br/>
+        <span>Step 2 →</span> Sign up free with Google/GitHub — no card needed<br/>
+        <span>Step 3 →</span> Click "Create API Key" → copy it below
       </p>
     </div>
 
-    <label>GOOGLE GEMINI API KEY</label>
-    <input type="password" id="api-key-input" placeholder="AIza..." autocomplete="off"/>
+    <label>GROQ API KEY</label>
+    <input type="password" id="api-key-input" placeholder="gsk_..." autocomplete="off"/>
 
-    <div class="setup-hint">
-      Free tier: 15 requests/min · 1 million tokens/day · No credit card needed.<br/>
-      Your key stays in your browser only. Never sent anywhere except Google's API.
+    <div class="hint">
+      Free tier: 14,400 requests/day · 500,000 tokens/min · No credit card.<br/>
+      Powered by Llama 3.3 70B — runs fast on Groq's custom chips.<br/>
+      News pulled from real robotics RSS feeds — actual articles, real links.
     </div>
 
     <button class="btn-launch" onclick="startApp()">LAUNCH DASHBOARD →</button>
-    <div class="error-msg" id="setup-error"></div>
+    <div class="setup-err" id="setup-err"></div>
   </div>
 </div>
 
-<!-- ── Main App ─────────────────────────────────────────────────────────── -->
+<!-- ── App ──────────────────────────────────────────────────────────────── -->
 <div id="app">
   <div class="header">
     <div>
@@ -258,14 +240,13 @@
       <div class="sub">PERSONAL ROBOTICS INTELLIGENCE SYSTEM</div>
     </div>
     <div class="header-right">
-      <div class="model-badge">gemini-2.0-flash</div>
+      <div class="badge">llama-3.3-70b · groq</div>
       <div class="tabs">
         <button class="tab-btn active" id="tab-feed" onclick="switchTab('feed')">⚡ FEED</button>
         <button class="tab-btn" id="tab-rag" onclick="switchTab('rag')">🧠 RAG</button>
       </div>
     </div>
   </div>
-
   <div class="main">
     <div class="sidebar" id="sidebar">
       <div class="sidebar-label">CATEGORIES</div>
@@ -276,10 +257,35 @@
 </div>
 
 <script>
-// ── Config ─────────────────────────────────────────────────────────────────
-const GEMINI_MODEL = "gemini-1.5-flash";
-const GEMINI_URL = (key) =>
-  `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`;
+// ── Constants ──────────────────────────────────────────────────────────────
+const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
+const MODEL = "llama-3.3-70b-versatile";
+
+// RSS feeds via allorigins proxy (bypasses CORS)
+// Real feeds from actual robotics publications
+const RSS_FEEDS = {
+  "robotics-news": [
+    "https://www.therobotreport.com/feed/",
+    "https://spectrum.ieee.org/feeds/topic/robotics.rss",
+    "https://techcrunch.com/tag/robotics/feed/",
+  ],
+  "research-papers": [
+    "https://export.arxiv.org/rss/cs.RO",
+    "https://export.arxiv.org/rss/cs.AI",
+  ],
+  "skills-tutorials": [
+    "https://www.therobotreport.com/feed/",
+    "https://robohub.org/feed/",
+  ],
+  "agritech": [
+    "https://agfundernews.com/feed",
+    "https://www.precisionag.com/feed/",
+  ],
+  "embodied-ai": [
+    "https://export.arxiv.org/rss/cs.RO",
+    "https://techcrunch.com/tag/artificial-intelligence/feed/",
+  ],
+};
 
 const CATEGORIES = [
   { id: "robotics-news",    label: "Robotics News",             icon: "⚙️",  color: "#00ff88" },
@@ -289,86 +295,99 @@ const CATEGORIES = [
   { id: "embodied-ai",      label: "AI & Embodied Intelligence", icon: "🤖",  color: "#ff44aa" },
 ];
 
-const FEED_PROMPTS = {
-  "robotics-news":    "latest robotics industry news, new robot products, company announcements 2025",
-  "research-papers":  "latest robotics and automation research papers, recent arxiv robotics publications 2025",
-  "skills-tutorials": "best ROS2 tutorials, embedded systems guides, robotics programming learning resources 2025",
-  "agritech":         "latest agricultural robotics, smart farming automation, precision agriculture technology 2025",
-  "embodied-ai":      "latest embodied AI research, robot foundation models, humanoid robots, robot learning 2025",
-};
-
 // ── State ──────────────────────────────────────────────────────────────────
 let API_KEY = "";
 let activeTab = "feed";
 let activeCategory = CATEGORIES[0];
-let documents = [];         // in-memory RAG store
-const FEED_CACHE = {};      // category → items
+let documents = [];
+const FEED_CACHE = {};
 
 // ── Setup ──────────────────────────────────────────────────────────────────
 window.onload = () => {
-  const saved = sessionStorage.getItem("robolab_gemini_key");
+  const saved = sessionStorage.getItem("robolab_groq_key");
   if (saved) document.getElementById("api-key-input").value = saved;
 };
 
 async function startApp() {
   const key = document.getElementById("api-key-input").value.trim();
-  const errEl = document.getElementById("setup-error");
-  errEl.textContent = "";
+  const err = document.getElementById("setup-err");
+  err.textContent = "";
 
   if (!key || key.length < 10) {
-    errEl.textContent = "Please enter a valid Gemini API key";
+    err.textContent = "Please enter a valid Groq API key (starts with gsk_)";
     return;
   }
 
-  // Quick validation call
-  errEl.textContent = "Verifying key...";
+  err.textContent = "Verifying key...";
   try {
-    await callGemini("Say: OK", key);
+    await callGroq([{ role: "user", content: "Say OK" }], key);
   } catch (e) {
-    errEl.textContent = "✕ Invalid key or API error: " + e.message;
+    err.textContent = "✕ " + e.message;
     return;
   }
 
   API_KEY = key;
-  sessionStorage.setItem("robolab_gemini_key", key);
+  sessionStorage.setItem("robolab_groq_key", key);
   document.getElementById("setup-screen").style.display = "none";
   document.getElementById("app").style.display = "flex";
   renderSidebar();
   renderFeed();
 }
 
-// ── Gemini API call ────────────────────────────────────────────────────────
-// LEARNING NOTE:
-// Gemini's API structure is different from Claude.
-// Instead of {role, content} it uses {role, parts:[{text}]}
-// The response is in candidates[0].content.parts[0].text
-async function callGemini(prompt, key = API_KEY, useSearch = false) {
-  const body = {
-    contents: [{ role: "user", parts: [{ text: prompt }] }],
-    generationConfig: { temperature: 0.7, maxOutputTokens: 1500 },
-  };
+// ── Groq API ───────────────────────────────────────────────────────────────
+async function callGroq(messages, key = API_KEY, system = "") {
+  const msgs = system
+    ? [{ role: "system", content: system }, ...messages]
+    : messages;
 
-  // Gemini grounding with Google Search (free tier supports this)
-  if (useSearch) {
-    body.tools = [{ google_search: {} }];
-  }
-
-  const res = await fetch(GEMINI_URL(key), {
+  const res = await fetch(GROQ_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${key}`,
+    },
+    body: JSON.stringify({ model: MODEL, messages: msgs, max_tokens: 1500, temperature: 0.7 }),
   });
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error?.message || `API error ${res.status}`);
+    const e = await res.json().catch(() => ({}));
+    throw new Error(e.error?.message || `API error ${res.status}`);
   }
 
   const data = await res.json();
-  return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+  return data.choices[0].message.content;
 }
 
-// ── Tab switch ─────────────────────────────────────────────────────────────
+// ── RSS fetch via allorigins ───────────────────────────────────────────────
+// LEARNING NOTE:
+// Browsers block cross-origin requests (CORS).
+// allorigins.win is a free proxy that fetches any URL and returns it
+// with CORS headers so our browser can read it.
+async function fetchRSS(url) {
+  const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+  const res = await fetch(proxy);
+  const data = await res.json();
+  return data.contents || "";
+}
+
+// Parse RSS XML into article objects
+function parseRSS(xml) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(xml, "text/xml");
+  const items = [...doc.querySelectorAll("item, entry")];
+
+  return items.slice(0, 8).map(item => ({
+    title: item.querySelector("title")?.textContent?.trim() || "",
+    link:  item.querySelector("link")?.textContent?.trim() ||
+           item.querySelector("link")?.getAttribute("href") || "",
+    desc:  item.querySelector("description, summary")?.textContent
+           ?.replace(/<[^>]*>/g, "").trim().slice(0, 300) || "",
+    date:  item.querySelector("pubDate, published, updated")?.textContent?.trim() || "",
+    source: new URL(url.startsWith("http") ? url : "https://" + url).hostname.replace("www.", "").replace("export.", ""),
+  })).filter(i => i.title.length > 5);
+}
+
+// ── Tab / Sidebar ──────────────────────────────────────────────────────────
 function switchTab(tab) {
   activeTab = tab;
   document.getElementById("tab-feed").classList.toggle("active", tab === "feed");
@@ -377,15 +396,13 @@ function switchTab(tab) {
   tab === "feed" ? renderFeed() : renderRAG();
 }
 
-// ── Sidebar ────────────────────────────────────────────────────────────────
 function renderSidebar() {
   document.getElementById("cat-list").innerHTML = CATEGORIES.map(cat => `
-    <button class="cat-btn" id="cat-${cat.id}" onclick="selectCat('${cat.id}')"
+    <button class="cat-btn" onclick="selectCat('${cat.id}')"
       style="${cat.id === activeCategory.id ? `background:${cat.color}14;border-color:${cat.color}33` : ''}">
       <span style="font-size:14px">${cat.icon}</span>
       <span class="cat-label" style="color:${cat.id === activeCategory.id ? cat.color : '#444'}">${cat.label}</span>
-    </button>
-  `).join("");
+    </button>`).join("");
 }
 
 function selectCat(id) {
@@ -404,77 +421,108 @@ function renderFeed() {
       <span style="font-size:22px">${cat.icon}</span>
       <div>
         <h2 style="color:${cat.color}">${cat.label}</h2>
-        <div class="content-sub">GOOGLE SEARCH GROUNDING · CLICK CARDS TO EXPAND</div>
+        <div class="content-sub">REAL RSS FEEDS + AI INSIGHTS · CLICK TO EXPAND</div>
       </div>
     </div>
     <div id="feed-body">
       ${cached
         ? renderCards(cached, cat)
         : `<button class="fetch-btn" style="background:${cat.color};color:#000"
-             onclick="fetchFeed()">FETCH LATEST →</button>`
-      }
-    </div>
-  `;
+             onclick="fetchFeed()">FETCH LATEST →</button>`}
+    </div>`;
 }
 
 async function fetchFeed() {
   const cat = activeCategory;
   const body = document.getElementById("feed-body");
-  body.innerHTML = `<div class="loading-text" style="color:${cat.color}">⟳ Searching Google...</div>`;
-
-  const prompt = `Search for the latest news and updates about: "${FEED_PROMPTS[cat.id]}"
-
-Return ONLY a valid JSON array of exactly 5 objects. No markdown formatting, no backticks, no explanation before or after.
-
-Each object must have these exact keys:
-- "title": headline in max 12 words
-- "summary": 2-3 sentences explaining what happened and why it matters for robotics
-- "source": name of website or publication
-- "relevance": one sentence on why a robotics/automation learner should care about this
-
-Start your response with [ and end with ]`;
+  body.innerHTML = `<div class="loading-text" style="color:${cat.color}">⟳ Fetching RSS feeds...</div>`;
 
   try {
-    const raw = await callGemini(prompt, API_KEY, true); // true = Google Search grounding
+    // Step 1: fetch RSS from all feeds for this category
+    const feeds = RSS_FEEDS[cat.id] || [];
+    let allArticles = [];
 
-    // Safely extract JSON
-    const start = raw.indexOf("[");
-    const end = raw.lastIndexOf("]");
-    if (start === -1 || end === -1) throw new Error("Response was not valid JSON. Try again.");
-    const items = JSON.parse(raw.slice(start, end + 1));
+    for (const url of feeds) {
+      try {
+        body.querySelector(".loading-text").textContent = `⟳ Fetching ${url.split("/")[2]}...`;
+        const xml = await fetchRSS(url);
+        const articles = parseRSS(xml);
+        allArticles = [...allArticles, ...articles];
+      } catch (e) {
+        console.warn("Feed failed:", url, e.message);
+      }
+    }
 
-    FEED_CACHE[cat.id] = items;
-    body.innerHTML = renderCards(items, cat);
+    if (allArticles.length === 0) throw new Error("Could not load any RSS feeds. Check your internet connection.");
+
+    // Deduplicate by title
+    const seen = new Set();
+    allArticles = allArticles.filter(a => {
+      if (seen.has(a.title)) return false;
+      seen.add(a.title); return true;
+    });
+
+    // Step 2: ask Groq to pick the 5 best and add insights
+    body.querySelector(".loading-text").textContent = "⟳ AI selecting top stories...";
+
+    const articleList = allArticles.slice(0, 20).map((a, i) =>
+      `${i}. "${a.title}" — ${a.desc.slice(0, 150)}`).join("\n");
+
+    const prompt = `You are a robotics learning assistant. From this list of articles, pick the 5 most relevant and interesting for someone learning robotics, automation, and AI.
+
+Articles:
+${articleList}
+
+Return ONLY a JSON array of 5 objects. No markdown, no backticks.
+Each object: {"index": <original index number>, "insight": "<one sentence on why this matters for a robotics learner>"}
+Start with [ end with ]`;
+
+    const raw = await callGroq([{ role: "user", content: prompt }]);
+    const start = raw.indexOf("["), end = raw.lastIndexOf("]");
+    const picks = JSON.parse(raw.slice(start, end + 1));
+
+    // Merge picks with original articles
+    const finalItems = picks.map(p => ({
+      ...allArticles[p.index],
+      insight: p.insight,
+    })).filter(i => i.title);
+
+    FEED_CACHE[cat.id] = finalItems;
+    body.innerHTML = renderCards(finalItems, cat);
+
   } catch (e) {
     body.innerHTML = `
-      <div class="err" style="margin-bottom:14px">✕ ${e.message}</div>
-      <button class="fetch-btn" style="background:${cat.color};color:#000" onclick="fetchFeed()">RETRY →</button>`;
+      <div class="err">✕ ${e.message}</div>
+      <button class="fetch-btn" style="background:${cat.color};color:#000;margin-top:4px"
+        onclick="fetchFeed()">RETRY →</button>`;
   }
 }
 
 function renderCards(items, cat) {
   return items.map((item, i) => `
-    <div class="feed-card" onclick="toggleCard(${i},'${cat.id}')"
-      style="border-left:3px solid ${cat.color}">
+    <div class="feed-card" style="border-left:3px solid ${cat.color}">
       <div class="card-row">
-        <div class="card-title">${item.title}</div>
-        <div class="card-toggle" style="color:${cat.color}" id="tog-${cat.id}-${i}">▼</div>
+        <div class="card-title">
+          ${item.link
+            ? `<a href="${item.link}" target="_blank" rel="noopener">${item.title}</a>`
+            : item.title}
+        </div>
+        <button class="toggle-btn" style="color:${cat.color}" id="tog-${i}"
+          onclick="toggleCard(${i})">▼</button>
       </div>
-      ${item.source ? `<div class="card-source">via ${item.source}</div>` : ""}
-      <div class="card-body" id="cbody-${cat.id}-${i}">
-        <div class="card-summary">${item.summary}</div>
-        ${item.relevance ? `<div class="card-relevance" style="color:${cat.color}">💡 ${item.relevance}</div>` : ""}
+      <div class="card-meta">${item.source || ""}${item.date ? " · " + item.date.slice(0, 16) : ""}</div>
+      <div id="cbody-${i}" style="display:none">
+        ${item.desc ? `<div class="card-summary">${item.desc}</div>` : ""}
+        ${item.insight ? `<div class="card-insight" style="color:${cat.color}">💡 ${item.insight}</div>` : ""}
       </div>
-    </div>
-  `).join("") + `
-    <button class="refresh-btn"
-      style="color:${cat.color};border:1px solid ${cat.color}44"
-      onclick="delete FEED_CACHE['${cat.id}'];fetchFeed()">↻ Refresh</button>`;
+    </div>`).join("") + `
+    <button class="refresh-btn" style="color:${cat.color};border:1px solid ${cat.color}44"
+      onclick="FEED_CACHE['${cat.id}']=null;fetchFeed()">↻ Refresh</button>`;
 }
 
-function toggleCard(i, catId) {
-  const b = document.getElementById(`cbody-${catId}-${i}`);
-  const t = document.getElementById(`tog-${catId}-${i}`);
+function toggleCard(i) {
+  const b = document.getElementById(`cbody-${i}`);
+  const t = document.getElementById(`tog-${i}`);
   const open = b.style.display !== "block";
   b.style.display = open ? "block" : "none";
   t.textContent = open ? "▲" : "▼";
@@ -488,7 +536,7 @@ function renderRAG() {
     <div style="margin-bottom:24px">
       <h2 style="font-family:'Space Mono',monospace;font-size:15px;color:#00cfff">🧠 KNOWLEDGE BASE</h2>
       <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#222;letter-spacing:2px;margin-top:4px">
-        UPLOAD · CHUNK · KEYWORD INDEX · SEARCH · NOTES
+        UPLOAD · CHUNK · INDEX · SEARCH · STRUCTURED NOTES
       </div>
     </div>
 
@@ -499,7 +547,6 @@ function renderRAG() {
     </div>
     <input type="file" id="file-inp" accept=".txt,.md,.pdf" style="display:none" onchange="handleUpload(event)"/>
     <div class="upload-msg" id="up-msg"></div>
-
     <div id="doc-list"></div>
 
     <div class="rag-label" style="margin-top:20px">SEARCH KNOWLEDGE BASE</div>
@@ -509,8 +556,7 @@ function renderRAG() {
         onkeydown="if(event.key==='Enter')doSearch()"/>
       <button class="search-btn" id="s-btn" onclick="doSearch()">SEARCH →</button>
     </div>
-    <div id="rag-result"></div>
-  `;
+    <div id="rag-result"></div>`;
   renderDocList();
 }
 
@@ -524,18 +570,13 @@ function renderDocList() {
       <div class="doc-item">
         <div>
           <div class="doc-name">📄 ${d.name}</div>
-          <div class="doc-meta">${d.chunks.length} chunks indexed</div>
+          <div class="doc-meta2">${d.chunks.length} chunks indexed</div>
         </div>
         <button class="del-btn" onclick="removeDoc('${d.id}')">✕ remove</button>
-      </div>
-    `).join("")}
-  `;
+      </div>`).join("")}`;
 }
 
 // ── Text chunker ───────────────────────────────────────────────────────────
-// LEARNING NOTE:
-// We split documents into 800-char chunks with 100-char overlap.
-// Overlap ensures sentences at chunk boundaries aren't lost.
 function chunkText(text, size = 800, overlap = 100) {
   const chunks = [];
   let start = 0;
@@ -547,7 +588,7 @@ function chunkText(text, size = 800, overlap = 100) {
   return chunks;
 }
 
-// ── PDF extraction via pdf.js CDN ──────────────────────────────────────────
+// ── PDF extraction ─────────────────────────────────────────────────────────
 async function extractPDF(file) {
   if (!window.pdfjsLib) {
     await new Promise((res, rej) => {
@@ -570,7 +611,7 @@ async function extractPDF(file) {
   return text;
 }
 
-// ── Upload handler ─────────────────────────────────────────────────────────
+// ── Upload ─────────────────────────────────────────────────────────────────
 async function handleUpload(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -587,17 +628,15 @@ async function handleUpload(e) {
       throw new Error("Could not extract readable text from this file");
 
     const rawChunks = chunkText(text);
-    const limit = Math.min(rawChunks.length, 15); // cap at 15 for free tier rate limits
+    const limit = Math.min(rawChunks.length, 20);
     const processedChunks = [];
 
     for (let i = 0; i < limit; i++) {
       setMsg(msg, `Indexing chunk ${i + 1} / ${limit}...`, "#888");
-
-      // Ask Gemini to extract keywords for this chunk
-      // LEARNING NOTE: These keywords become our "embedding" for retrieval
-      const kw = await callGemini(
-        `List 15 important technical keywords from this text, comma-separated only, no explanation:\n\n${rawChunks[i].slice(0, 900)}`
-      );
+      const kw = await callGroq([{
+        role: "user",
+        content: `List 15 important technical keywords from this text, comma-separated only:\n\n${rawChunks[i].slice(0, 900)}`
+      }]);
       processedChunks.push({ text: rawChunks[i], keywords: kw.toLowerCase() });
     }
 
@@ -605,7 +644,6 @@ async function handleUpload(e) {
     setMsg(msg, `✓ Indexed ${processedChunks.length} chunks from "${file.name}"`, "#00ff88");
     hint.textContent = "Click to upload — PDF, TXT, or MD";
     renderDocList();
-
   } catch (err) {
     setMsg(msg, `✕ ${err.message}`, "#ff4444");
     hint.textContent = "Click to upload — PDF, TXT, or MD";
@@ -614,16 +652,8 @@ async function handleUpload(e) {
 }
 
 // ── RAG retrieval ──────────────────────────────────────────────────────────
-// LEARNING NOTE:
-// This is keyword-based retrieval — our lightweight "vector search".
-// Score each chunk by how many query words appear in its keywords/content.
-// Top-scoring chunks get sent to Gemini as context.
 function retrieveChunks(query, topK = 4) {
-  const words = query.toLowerCase()
-    .replace(/[^a-z0-9\s]/g, "")
-    .split(/\s+/)
-    .filter(w => w.length > 2);
-
+  const words = query.toLowerCase().replace(/[^a-z0-9\s]/g, "").split(/\s+/).filter(w => w.length > 2);
   return documents
     .flatMap(doc => doc.chunks.map(c => ({ ...c, docName: doc.name })))
     .map(c => ({
@@ -639,7 +669,6 @@ function retrieveChunks(query, topK = 4) {
 async function doSearch() {
   const query = document.getElementById("rag-q")?.value?.trim();
   if (!query) return;
-
   const btn = document.getElementById("s-btn");
   const resultDiv = document.getElementById("rag-result");
   btn.textContent = "..."; btn.disabled = true;
@@ -648,44 +677,30 @@ async function doSearch() {
   try {
     const chunks = retrieveChunks(query);
     const hasCtx = chunks.length > 0;
-
     const context = hasCtx
       ? chunks.map((c, i) => `[Source ${i + 1} — ${c.docName}]\n${c.text}`).join("\n\n---\n\n")
       : "";
 
-    const prompt = hasCtx
-      ? `You are a robotics knowledge assistant. Answer the query using the provided document context.
-Give a structured answer with numbered points, key concepts explained simply, and what to learn next.
-Note which sources you used.
+    const system = "You are a robotics knowledge assistant. Give structured answers with numbered points, key concepts explained simply, practical implications, and what to learn next.";
+    const userMsg = hasCtx
+      ? `Query: ${query}\n\nContext from uploaded documents:\n${context}\n\nAnswer using the context. Mention which sources helped.`
+      : `Question: ${query}\n\nAnswer thoroughly from your knowledge about robotics and technology.`;
 
-Query: ${query}
-
-Context:
-${context}`
-      : `You are a robotics knowledge assistant.
-Answer this question with structured notes: numbered points, key concepts, practical implications, and what to learn next.
-
-Question: ${query}`;
-
-    const answer = await callGemini(prompt);
+    const answer = await callGroq([{ role: "user", content: userMsg }], API_KEY, system);
     const sources = [...new Set(chunks.map(c => c.docName))];
 
     resultDiv.innerHTML = `
       <div class="result-box">
         <div class="result-label">
           KNOWLEDGE NOTES
-          <span class="result-meta">
-            ${hasCtx ? `${chunks.length} chunks matched · from your docs` : "from Gemini knowledge"}
-          </span>
+          <span class="result-meta">${hasCtx ? `${chunks.length} chunks matched · from your docs` : "from Llama 3.3 70B"}</span>
         </div>
         <div class="result-body">${answer}</div>
         ${sources.length > 0 ? `<div class="result-sources">SOURCES: ${sources.join(" · ")}</div>` : ""}
       </div>`;
-
   } catch (e) {
     resultDiv.innerHTML = `<div class="err">✕ ${e.message}</div>`;
   }
-
   btn.textContent = "SEARCH →"; btn.disabled = false;
 }
 
@@ -695,10 +710,7 @@ function removeDoc(id) {
   renderRAG();
 }
 
-function setMsg(el, text, color) {
-  el.textContent = text;
-  el.style.color = color;
-}
+function setMsg(el, text, color) { el.textContent = text; el.style.color = color; }
 </script>
 </body>
 </html>
