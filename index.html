@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Robolab Intel</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;600&family=Space+Mono:wght@700&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0a0a0f; color: #fff; font-family: 'IBM Plex Sans', sans-serif; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+    #app { display: flex; height: 100vh; flex-direction: column; }
+    .header { border-bottom: 1px solid rgba(255,255,255,0.07); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; background: rgba(10,10,15,0.97); position: sticky; top: 0; z-index: 10; }
+    .header h1 { font-family: 'Space Mono', monospace; font-size: 16px; color: #00ff88; letter-spacing: 2px; }
+    .header .sub { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #222; letter-spacing: 3px; margin-top: 2px; }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .badge { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #333; border: 1px solid #1a1a1a; border-radius: 6px; padding: 5px 10px; }
+    .tabs { display: flex; gap: 8px; }
+    .tab-btn { background: transparent; color: #444; border: 1px solid rgba(255,255,255,0.07); border-radius: 6px; padding: 7px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 700; cursor: pointer; letter-spacing: 1px; transition: all 0.2s; }
+    .tab-btn.active { background: #00ff88; color: #000; border-color: #00ff88; }
+    .main { display: flex; flex: 1; overflow: hidden; }
+    .sidebar { width: 205px; border-right: 1px solid rgba(255,255,255,0.05); padding: 18px 8px; overflow-y: auto; flex-shrink: 0; }
+    .sidebar-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #222; letter-spacing: 3px; margin: 0 0 12px 8px; }
+    .cat-btn { display: flex; align-items: center; gap: 8px; width: 100%; background: transparent; border: 1px solid transparent; border-radius: 8px; padding: 9px 10px; cursor: pointer; text-align: left; margin-bottom: 3px; transition: all 0.15s; }
+    .cat-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #444; line-height: 1.4; }
+    .content { flex: 1; overflow-y: auto; padding: 22px 26px; }
+    .content-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .content-header h2 { font-family: 'Space Mono', monospace; font-size: 15px; margin-bottom: 2px; }
+    .content-sub { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #222; letter-spacing: 2px; }
+    .fetch-btn { border: none; border-radius: 8px; padding: 10px 22px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 700; cursor: pointer; letter-spacing: 1px; }
+    .loading-text { font-family: 'IBM Plex Mono', monospace; font-size: 13px; padding: 16px 0; animation: pulse 1.2s infinite; }
+    .err { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #ff4444; margin-bottom: 12px; }
+    .feed-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 13px 16px; margin-bottom: 9px; transition: background 0.2s; }
+    .feed-card:hover { background: rgba(255,255,255,0.05); }
+    .card-row { display: flex; justify-content: space-between; align-items: flex-start; }
+    .card-title { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #ddd; line-height: 1.5; flex: 1; }
+    .card-title a { color: #ddd; text-decoration: none; }
+    .card-title a:hover { color: #fff; text-decoration: underline; }
+    .card-meta { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #2a2a2a; margin-top: 4px; }
+    .card-summary { font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; color: #aaa; line-height: 1.7; margin-top: 8px; }
+    .card-insight { font-family: 'IBM Plex Mono', monospace; font-size: 11px; line-height: 1.5; margin-top: 8px; }
+    .toggle-btn { background: transparent; border: none; cursor: pointer; font-size: 10px; margin-left: 10px; flex-shrink: 0; padding: 2px; }
+    .refresh-btn { background: transparent; border-radius: 8px; padding: 8px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; cursor: pointer; margin-top: 8px; }
+    .rag-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #444; letter-spacing: 3px; margin-bottom: 12px; }
+    .upload-area { border: 1px dashed rgba(255,255,255,0.12); border-radius: 10px; padding: 22px; text-align: center; cursor: pointer; transition: border-color 0.2s; margin-bottom: 6px; }
+    .upload-area:hover { border-color: #00ff88; }
+    .upload-icon { font-size: 26px; margin-bottom: 8px; }
+    .upload-hint { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #444; }
+    .upload-msg { font-family: 'IBM Plex Mono', monospace; font-size: 12px; margin: 10px 0 20px; min-height: 18px; }
+    .doc-item { display: flex; align-items: center; justify-content: space-between; background: rgba(0,255,136,0.04); border: 1px solid rgba(0,255,136,0.1); border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; }
+    .doc-name { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #00ff88; }
+    .doc-meta2 { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #2a2a2a; margin-top: 3px; }
+    .del-btn { background: transparent; color: #ff4444; border: 1px solid rgba(255,68,68,0.2); border-radius: 6px; padding: 4px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; cursor: pointer; }
+    .search-row { display: flex; gap: 10px; margin-bottom: 16px; }
+    .search-input { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 11px 15px; color: #fff; font-family: 'IBM Plex Mono', monospace; font-size: 12px; outline: none; }
+    .search-input:focus { border-color: #00cfff; }
+    .search-btn { background: #00cfff; color: #000; border: none; border-radius: 8px; padding: 11px 18px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+    .result-box { background: rgba(0,207,255,0.04); border: 1px solid rgba(0,207,255,0.15); border-radius: 10px; padding: 18px 20px; }
+    .result-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #00cfff; letter-spacing: 2px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .result-meta { font-size: 10px; color: #2a2a2a; }
+    .result-body { font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: #ddd; line-height: 1.85; white-space: pre-wrap; }
+    .result-sources { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #333; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+    .fade-in { animation: fadeIn 0.25s ease; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <div class="header">
+    <div>
+      <h1>ROBOLAB_INTEL</h1>
+      <div class="sub">PERSONAL ROBOTICS INTELLIGENCE SYSTEM</div>
+    </div>
+    <div class="header-right">
+      <div class="badge">llama-3.3-70b · groq</div>
+      <div class="tabs">
+        <button class="tab-btn active" id="tab-feed" onclick="switchTab('feed')">⚡ FEED</button>
+        <button class="tab-btn" id="tab-rag" onclick="switchTab('rag')">🧠 RAG</button>
+      </div>
+    </div>
+  </div>
+  <div class="main">
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-label">CATEGORIES</div>
+      <div id="cat-list"></div>
+    </div>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+<script>
+// KEY is injected by GitHub Actions — never hardcode your real key here
+const API_KEY = "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";
+const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
+const MODEL = "llama-3.3-70b-versatile";
+
+const RSS_FEEDS = {
+  "robotics-news":    ["https://www.therobotreport.com/feed/","https://spectrum.ieee.org/feeds/topic/robotics.rss","https://techcrunch.com/tag/robotics/feed/"],
+  "research-papers":  ["https://export.arxiv.org/rss/cs.RO","https://export.arxiv.org/rss/cs.AI"],
+  "skills-tutorials": ["https://www.therobotreport.com/feed/","https://robohub.org/feed/"],
+  "agritech":         ["https://agfundernews.com/feed","https://www.precisionag.com/feed/"],
+  "embodied-ai":      ["https://export.arxiv.org/rss/cs.RO","https://techcrunch.com/tag/artificial-intelligence/feed/"],
+};
+
+const CATEGORIES = [
+  { id: "robotics-news",    label: "Robotics News",             icon: "⚙️",  color: "#00ff88" },
+  { id: "research-papers",  label: "Research Papers",            icon: "📄",  color: "#00cfff" },
+  { id: "skills-tutorials", label: "Skills & Tutorials",         icon: "🛠️", color: "#ffaa00" },
+  { id: "agritech",         label: "AgriTech & Automation",      icon: "🌱",  color: "#88ff44" },
+  { id: "embodied-ai",      label: "AI & Embodied Intelligence", icon: "🤖",  color: "#ff44aa" },
+];
+
+let activeTab = "feed", activeCategory = CATEGORIES[0], documents = [];
+const FEED_CACHE = {};
+
+window.onload = () => { renderSidebar(); renderFeed(); };
+
+async function callGroq(messages, system = "") {
+  const msgs = system ? [{ role: "system", content: system }, ...messages] : messages;
+  const res = await fetch(GROQ_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${API_KEY}` },
+    body: JSON.stringify({ model: MODEL, messages: msgs, max_tokens: 1500, temperature: 0.7 }),
+  });
+  if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || `API error ${res.status}`); }
+  return (await res.json()).choices[0].message.content;
+}
+
+async function fetchRSS(url) {
+  const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
+  return (await res.json()).contents || "";
+}
+
+function parseRSS(xml, feedUrl) {
+  const doc = new DOMParser().parseFromString(xml, "text/xml");
+  return [...doc.querySelectorAll("item, entry")].slice(0, 8).map(item => ({
+    title:  item.querySelector("title")?.textContent?.trim() || "",
+    link:   item.querySelector("link")?.textContent?.trim() || item.querySelector("link")?.getAttribute("href") || "",
+    desc:   item.querySelector("description, summary")?.textContent?.replace(/<[^>]*>/g,"").trim().slice(0,300) || "",
+    date:   item.querySelector("pubDate, published, updated")?.textContent?.trim() || "",
+    source: new URL(feedUrl).hostname.replace("www.","").replace("export.",""),
+  })).filter(i => i.title.length > 5);
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.getElementById("tab-feed").classList.toggle("active", tab === "feed");
+  document.getElementById("tab-rag").classList.toggle("active", tab === "rag");
+  document.getElementById("sidebar").style.display = tab === "feed" ? "block" : "none";
+  tab === "feed" ? renderFeed() : renderRAG();
+}
+
+function renderSidebar() {
+  document.getElementById("cat-list").innerHTML = CATEGORIES.map(cat => `
+    <button class="cat-btn" onclick="selectCat('${cat.id}')"
+      style="${cat.id===activeCategory.id ? `background:${cat.color}14;border-color:${cat.color}33`:''}">
+      <span style="font-size:14px">${cat.icon}</span>
+      <span class="cat-label" style="color:${cat.id===activeCategory.id ? cat.color:'#444'}">${cat.label}</span>
+    </button>`).join("");
+}
+
+function selectCat(id) { activeCategory = CATEGORIES.find(c=>c.id===id); renderSidebar(); renderFeed(); }
+
+function renderFeed() {
+  const cat = activeCategory, cached = FEED_CACHE[cat.id];
+  document.getElementById("content").className = "content fade-in";
+  document.getElementById("content").innerHTML = `
+    <div class="content-header">
+      <span style="font-size:22px">${cat.icon}</span>
+      <div><h2 style="color:${cat.color}">${cat.label}</h2>
+      <div class="content-sub">REAL RSS FEEDS + AI INSIGHTS · CLICK TO EXPAND</div></div>
+    </div>
+    <div id="feed-body">${cached ? renderCards(cached,cat) :
+      `<button class="fetch-btn" style="background:${cat.color};color:#000" onclick="fetchFeed()">FETCH LATEST →</button>`
+    }</div>`;
+}
+
+async function fetchFeed() {
+  const cat = activeCategory;
+  const body = document.getElementById("feed-body");
+  body.innerHTML = `<div class="loading-text" style="color:${cat.color}">⟳ Fetching RSS feeds...</div>`;
+  try {
+    let all = [];
+    for (const url of RSS_FEEDS[cat.id]||[]) {
+      try {
+        const lt = body.querySelector(".loading-text");
+        if(lt) lt.textContent = `⟳ Fetching ${new URL(url).hostname}...`;
+        all = [...all, ...parseRSS(await fetchRSS(url), url)];
+      } catch(e) { console.warn("Feed failed:", url); }
+    }
+    if (!all.length) throw new Error("Could not load any RSS feeds.");
+    const seen = new Set();
+    all = all.filter(a => { if(seen.has(a.title)) return false; seen.add(a.title); return true; });
+    const lt = body.querySelector(".loading-text");
+    if(lt) lt.textContent = "⟳ AI selecting top stories...";
+    const list = all.slice(0,20).map((a,i)=>`${i}. "${a.title}" — ${a.desc.slice(0,150)}`).join("\n");
+    const raw = await callGroq([{role:"user",content:
+      `Pick the 5 most relevant articles for a robotics learner.\nArticles:\n${list}\n\nReturn ONLY a JSON array of 5 objects, no markdown.\nFormat: [{"index":<number>,"insight":"<one sentence why this matters>"}]\nStart with [ end with ]`}]);
+    const s = raw.indexOf("["), e = raw.lastIndexOf("]");
+    const picks = JSON.parse(raw.slice(s, e+1));
+    const final = picks.map(p=>({...all[p.index], insight:p.insight})).filter(i=>i?.title);
+    FEED_CACHE[cat.id] = final;
+    body.innerHTML = renderCards(final, cat);
+  } catch(e) {
+    body.innerHTML = `<div class="err">✕ ${e.message}</div>
+      <button class="fetch-btn" style="background:${cat.color};color:#000;margin-top:4px" onclick="fetchFeed()">RETRY →</button>`;
+  }
+}
+
+function renderCards(items, cat) {
+  return items.map((item,i)=>`
+    <div class="feed-card" style="border-left:3px solid ${cat.color}">
+      <div class="card-row">
+        <div class="card-title">${item.link?`<a href="${item.link}" target="_blank" rel="noopener">${item.title}</a>`:item.title}</div>
+        <button class="toggle-btn" style="color:${cat.color}" id="tog-${i}" onclick="toggleCard(${i})">▼</button>
+      </div>
+      <div class="card-meta">${item.source||""}${item.date?" · "+item.date.slice(0,16):""}</div>
+      <div id="cbody-${i}" style="display:none">
+        ${item.desc?`<div class="card-summary">${item.desc}</div>`:""}
+        ${item.insight?`<div class="card-insight" style="color:${cat.color}">💡 ${item.insight}</div>`:""}
+      </div>
+    </div>`).join("")+`
+  <button class="refresh-btn" style="color:${cat.color};border:1px solid ${cat.color}44"
+    onclick="delete FEED_CACHE['${cat.id}'];fetchFeed()">↻ Refresh</button>`;
+}
+
+function toggleCard(i) {
+  const b=document.getElementById(`cbody-${i}`), t=document.getElementById(`tog-${i}`);
+  const open=b.style.display!=="block"; b.style.display=open?"block":"none"; t.textContent=open?"▲":"▼";
+}
+
+function renderRAG() {
+  const c=document.getElementById("content");
+  c.className="content fade-in";
+  c.innerHTML=`
+    <div style="margin-bottom:24px">
+      <h2 style="font-family:'Space Mono',monospace;font-size:15px;color:#00cfff">🧠 KNOWLEDGE BASE</h2>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#222;letter-spacing:2px;margin-top:4px">UPLOAD · CHUNK · INDEX · SEARCH · STRUCTURED NOTES</div>
+    </div>
+    <div class="rag-label">UPLOAD DOCUMENT</div>
+    <div class="upload-area" onclick="document.getElementById('file-inp').click()">
+      <div class="upload-icon">📂</div>
+      <div class="upload-hint" id="up-hint">Click to upload — PDF, TXT, or MD</div>
+    </div>
+    <input type="file" id="file-inp" accept=".txt,.md,.pdf" style="display:none" onchange="handleUpload(event)"/>
+    <div class="upload-msg" id="up-msg"></div>
+    <div id="doc-list"></div>
+    <div class="rag-label" style="margin-top:20px">SEARCH KNOWLEDGE BASE</div>
+    <div class="search-row">
+      <input class="search-input" id="rag-q" placeholder="Ask anything..." onkeydown="if(event.key==='Enter')doSearch()"/>
+      <button class="search-btn" id="s-btn" onclick="doSearch()">SEARCH →</button>
+    </div>
+    <div id="rag-result"></div>`;
+  renderDocList();
+}
+
+function renderDocList() {
+  const el=document.getElementById("doc-list"); if(!el) return;
+  if(!documents.length){el.innerHTML="";return;}
+  el.innerHTML=`<div class="rag-label">KNOWLEDGE BASE — ${documents.length} DOC${documents.length!==1?"S":""}</div>`+
+    documents.map(d=>`<div class="doc-item">
+      <div><div class="doc-name">📄 ${d.name}</div><div class="doc-meta2">${d.chunks.length} chunks indexed</div></div>
+      <button class="del-btn" onclick="removeDoc('${d.id}')">✕ remove</button>
+    </div>`).join("");
+}
+
+function chunkText(text,size=800,overlap=100){
+  const chunks=[];let start=0;
+  while(start<text.length){const c=text.slice(start,start+size).trim();if(c.length>40)chunks.push(c);start+=size-overlap;}
+  return chunks;
+}
+
+async function extractPDF(file){
+  if(!window.pdfjsLib){
+    await new Promise((res,rej)=>{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";s.onload=res;s.onerror=rej;document.head.appendChild(s);});
+    pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  }
+  const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;
+  let text="";
+  for(let i=1;i<=pdf.numPages;i++){const p=await pdf.getPage(i);const ct=await p.getTextContent();text+=ct.items.map(s=>s.str).join(" ")+"\n";}
+  return text;
+}
+
+async function handleUpload(e){
+  const file=e.target.files[0];if(!file)return;
+  const hint=document.getElementById("up-hint"),msg=document.getElementById("up-msg");
+  setMsg(msg,`Reading ${file.name}...`,"#888");
+  try{
+    let text=file.type==="application/pdf"?await extractPDF(file):await file.text();
+    if(!text?.trim()||text.trim().length<20)throw new Error("Could not extract readable text");
+    const raw=chunkText(text),limit=Math.min(raw.length,20),chunks=[];
+    for(let i=0;i<limit;i++){
+      setMsg(msg,`Indexing chunk ${i+1}/${limit}...`,"#888");
+      const kw=await callGroq([{role:"user",content:`List 15 important technical keywords, comma-separated only:\n\n${raw[i].slice(0,900)}`}]);
+      chunks.push({text:raw[i],keywords:kw.toLowerCase()});
+    }
+    documents.push({id:Date.now().toString(),name:file.name,chunks});
+    setMsg(msg,`✓ Indexed ${chunks.length} chunks from "${file.name}"`,"#00ff88");
+    hint.textContent="Click to upload — PDF, TXT, or MD";
+    renderDocList();
+  }catch(err){setMsg(msg,`✕ ${err.message}`,"#ff4444");hint.textContent="Click to upload — PDF, TXT, or MD";}
+  e.target.value="";
+}
+
+function retrieveChunks(query,topK=4){
+  const words=query.toLowerCase().replace(/[^a-z0-9\s]/g,"").split(/\s+/).filter(w=>w.length>2);
+  return documents.flatMap(doc=>doc.chunks.map(c=>({...c,docName:doc.name})))
+    .map(c=>({...c,score:words.reduce((s,w)=>s+(c.keywords.includes(w)?2:0)+(c.text.toLowerCase().includes(w)?1:0),0)}))
+    .filter(c=>c.score>0).sort((a,b)=>b.score-a.score).slice(0,topK);
+}
+
+async function doSearch(){
+  const query=document.getElementById("rag-q")?.value?.trim();if(!query)return;
+  const btn=document.getElementById("s-btn"),rd=document.getElementById("rag-result");
+  btn.textContent="...";btn.disabled=true;rd.innerHTML="";
+  try{
+    const chunks=retrieveChunks(query),hasCtx=chunks.length>0;
+    const context=hasCtx?chunks.map((c,i)=>`[Source ${i+1} — ${c.docName}]\n${c.text}`).join("\n\n---\n\n"):"";
+    const system="You are a robotics knowledge assistant. Give structured answers with numbered points, key concepts explained simply, practical implications, and what to learn next.";
+    const userMsg=hasCtx?`Query: ${query}\n\nContext:\n${context}\n\nAnswer using the context.`:`Question: ${query}`;
+    const answer=await callGroq([{role:"user",content:userMsg}],system);
+    const sources=[...new Set(chunks.map(c=>c.docName))];
+    rd.innerHTML=`<div class="result-box">
+      <div class="result-label">KNOWLEDGE NOTES<span class="result-meta">${hasCtx?`${chunks.length} chunks · from your docs`:"from Llama 3.3 70B"}</span></div>
+      <div class="result-body">${answer}</div>
+      ${sources.length?`<div class="result-sources">SOURCES: ${sources.join(" · ")}</div>`:""}
+    </div>`;
+  }catch(e){rd.innerHTML=`<div class="err">✕ ${e.message}</div>`;}
+  btn.textContent="SEARCH →";btn.disabled=false;
+}
+
+function removeDoc(id){if(!confirm("Remove this document?"))return;documents=documents.filter(d=>d.id!==id);renderRAG();}
+function setMsg(el,text,color){el.textContent=text;el.style.color=color;}
+</script>
+</body>
+</html>
