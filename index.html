@@ -35,13 +35,16 @@
     .feed-card:hover { background: rgba(255,255,255,0.05); }
     .card-row { display: flex; justify-content: space-between; align-items: flex-start; }
     .card-title { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #ddd; line-height: 1.5; flex: 1; }
-    .card-title a { color: #ddd; text-decoration: none; }
-    .card-title a:hover { color: #fff; text-decoration: underline; }
     .card-meta { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #2a2a2a; margin-top: 4px; }
-    .card-summary { font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; color: #aaa; line-height: 1.7; margin-top: 8px; }
+    .card-body { display: none; margin-top: 10px; }
+    .card-summary { font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; color: #aaa; line-height: 1.7; }
     .card-insight { font-family: 'IBM Plex Mono', monospace; font-size: 11px; line-height: 1.5; margin-top: 8px; }
+    .card-links { margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .card-link { font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 5px; background: rgba(255,255,255,0.05); color: #888; text-decoration: none; }
+    .card-link:hover { color: #fff; }
     .toggle-btn { background: transparent; border: none; cursor: pointer; font-size: 10px; margin-left: 10px; flex-shrink: 0; padding: 2px; }
     .refresh-btn { background: transparent; border-radius: 8px; padding: 8px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; cursor: pointer; margin-top: 8px; }
+    .notice { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #2a2a2a; margin-bottom: 16px; padding: 10px 14px; border: 1px solid #1a1a1a; border-radius: 8px; line-height: 1.8; }
     .rag-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #444; letter-spacing: 3px; margin-bottom: 12px; }
     .upload-area { border: 1px dashed rgba(255,255,255,0.12); border-radius: 10px; padding: 22px; text-align: center; cursor: pointer; transition: border-color 0.2s; margin-bottom: 6px; }
     .upload-area:hover { border-color: #00ff88; }
@@ -57,7 +60,7 @@
     .search-input:focus { border-color: #00cfff; }
     .search-btn { background: #00cfff; color: #000; border: none; border-radius: 8px; padding: 11px 18px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
     .result-box { background: rgba(0,207,255,0.04); border: 1px solid rgba(0,207,255,0.15); border-radius: 10px; padding: 18px 20px; }
-    .result-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #00cfff; letter-spacing: 2px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .result-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #00cfff; letter-spacing: 2px; margin-bottom: 12px; display: flex; justify-content: space-between; }
     .result-meta { font-size: 10px; color: #2a2a2a; }
     .result-body { font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; color: #ddd; line-height: 1.85; white-space: pre-wrap; }
     .result-sources { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #333; }
@@ -90,18 +93,10 @@
   </div>
 </div>
 <script>
-// KEY is injected by GitHub Actions — never hardcode your real key here
+// Injected by GitHub Actions — never put your real key here
 const API_KEY = "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";
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const MODEL = "llama-3.3-70b-versatile";
-
-const RSS_FEEDS = {
-  "robotics-news":    ["https://www.therobotreport.com/feed/","https://spectrum.ieee.org/feeds/topic/robotics.rss","https://techcrunch.com/tag/robotics/feed/"],
-  "research-papers":  ["https://export.arxiv.org/rss/cs.RO","https://export.arxiv.org/rss/cs.AI"],
-  "skills-tutorials": ["https://www.therobotreport.com/feed/","https://robohub.org/feed/"],
-  "agritech":         ["https://agfundernews.com/feed","https://www.precisionag.com/feed/"],
-  "embodied-ai":      ["https://export.arxiv.org/rss/cs.RO","https://techcrunch.com/tag/artificial-intelligence/feed/"],
-};
 
 const CATEGORIES = [
   { id: "robotics-news",    label: "Robotics News",             icon: "⚙️",  color: "#00ff88" },
@@ -111,11 +106,23 @@ const CATEGORIES = [
   { id: "embodied-ai",      label: "AI & Embodied Intelligence", icon: "🤖",  color: "#ff44aa" },
 ];
 
+// What to ask Groq for each category
+// Groq's Llama 3.3 training data goes up to early 2024 — good enough for concepts,
+// research trends, tutorials, and evergreen robotics knowledge
+const CATEGORY_PROMPTS = {
+  "robotics-news": `List 5 of the most significant recent developments in robotics — new robots, company milestones, or industry shifts. For each include a search link.`,
+  "research-papers": `List 5 important recent robotics research papers or breakthroughs. Include the paper name, what problem it solves, and an arxiv or Google Scholar search link.`,
+  "skills-tutorials": `List 5 specific, practical skills or tutorials a robotics beginner should learn right now — ROS2, OpenCV, control systems, etc. Include a search or docs link for each.`,
+  "agritech": `List 5 important developments or technologies in agricultural robotics and smart farming automation. Include a search link for each.`,
+  "embodied-ai": `List 5 key breakthroughs or papers in embodied AI — robots that learn from interaction, foundation models for robotics, humanoid robots. Include a search link for each.`,
+};
+
 let activeTab = "feed", activeCategory = CATEGORIES[0], documents = [];
 const FEED_CACHE = {};
 
 window.onload = () => { renderSidebar(); renderFeed(); };
 
+// ── Groq API ───────────────────────────────────────────────────────────────
 async function callGroq(messages, system = "") {
   const msgs = system ? [{ role: "system", content: system }, ...messages] : messages;
   const res = await fetch(GROQ_URL, {
@@ -127,41 +134,27 @@ async function callGroq(messages, system = "") {
   return (await res.json()).choices[0].message.content;
 }
 
-async function fetchRSS(url) {
-  const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
-  return (await res.json()).contents || "";
-}
-
-function parseRSS(xml, feedUrl) {
-  const doc = new DOMParser().parseFromString(xml, "text/xml");
-  return [...doc.querySelectorAll("item, entry")].slice(0, 8).map(item => ({
-    title:  item.querySelector("title")?.textContent?.trim() || "",
-    link:   item.querySelector("link")?.textContent?.trim() || item.querySelector("link")?.getAttribute("href") || "",
-    desc:   item.querySelector("description, summary")?.textContent?.replace(/<[^>]*>/g,"").trim().slice(0,300) || "",
-    date:   item.querySelector("pubDate, published, updated")?.textContent?.trim() || "",
-    source: new URL(feedUrl).hostname.replace("www.","").replace("export.",""),
-  })).filter(i => i.title.length > 5);
-}
-
+// ── Tabs / Sidebar ─────────────────────────────────────────────────────────
 function switchTab(tab) {
   activeTab = tab;
-  document.getElementById("tab-feed").classList.toggle("active", tab === "feed");
-  document.getElementById("tab-rag").classList.toggle("active", tab === "rag");
-  document.getElementById("sidebar").style.display = tab === "feed" ? "block" : "none";
-  tab === "feed" ? renderFeed() : renderRAG();
+  document.getElementById("tab-feed").classList.toggle("active", tab==="feed");
+  document.getElementById("tab-rag").classList.toggle("active", tab==="rag");
+  document.getElementById("sidebar").style.display = tab==="feed" ? "block" : "none";
+  tab==="feed" ? renderFeed() : renderRAG();
 }
 
 function renderSidebar() {
   document.getElementById("cat-list").innerHTML = CATEGORIES.map(cat => `
     <button class="cat-btn" onclick="selectCat('${cat.id}')"
-      style="${cat.id===activeCategory.id ? `background:${cat.color}14;border-color:${cat.color}33`:''}">
+      style="${cat.id===activeCategory.id?`background:${cat.color}14;border-color:${cat.color}33`:''}">
       <span style="font-size:14px">${cat.icon}</span>
-      <span class="cat-label" style="color:${cat.id===activeCategory.id ? cat.color:'#444'}">${cat.label}</span>
+      <span class="cat-label" style="color:${cat.id===activeCategory.id?cat.color:'#444'}">${cat.label}</span>
     </button>`).join("");
 }
 
-function selectCat(id) { activeCategory = CATEGORIES.find(c=>c.id===id); renderSidebar(); renderFeed(); }
+function selectCat(id) { activeCategory=CATEGORIES.find(c=>c.id===id); renderSidebar(); renderFeed(); }
 
+// ── Feed — powered by Groq directly, no proxy needed ──────────────────────
 function renderFeed() {
   const cat = activeCategory, cached = FEED_CACHE[cat.id];
   document.getElementById("content").className = "content fade-in";
@@ -169,39 +162,42 @@ function renderFeed() {
     <div class="content-header">
       <span style="font-size:22px">${cat.icon}</span>
       <div><h2 style="color:${cat.color}">${cat.label}</h2>
-      <div class="content-sub">REAL RSS FEEDS + AI INSIGHTS · CLICK TO EXPAND</div></div>
+      <div class="content-sub">AI-CURATED KNOWLEDGE · CLICK CARDS TO EXPAND</div></div>
+    </div>
+    <div class="notice">
+      ⚡ Feed generated by Llama 3.3 70B — covers key developments, papers, and skills.<br/>
+      Each card includes a search link to find the latest real articles.
     </div>
     <div id="feed-body">${cached ? renderCards(cached,cat) :
-      `<button class="fetch-btn" style="background:${cat.color};color:#000" onclick="fetchFeed()">FETCH LATEST →</button>`
+      `<button class="fetch-btn" style="background:${cat.color};color:#000" onclick="fetchFeed()">GENERATE FEED →</button>`
     }</div>`;
 }
 
 async function fetchFeed() {
   const cat = activeCategory;
   const body = document.getElementById("feed-body");
-  body.innerHTML = `<div class="loading-text" style="color:${cat.color}">⟳ Fetching RSS feeds...</div>`;
+  body.innerHTML = `<div class="loading-text" style="color:${cat.color}">⟳ Generating with Llama 3.3...</div>`;
+
+  const prompt = `${CATEGORY_PROMPTS[cat.id]}
+
+Return ONLY a JSON array of exactly 5 objects. No markdown, no backticks, no explanation.
+Each object must have:
+- "title": concise headline (max 12 words)
+- "summary": 2-3 sentences explaining what it is and why it matters
+- "insight": one sentence on what a robotics learner should do with this
+- "searchQuery": a Google search query string to find real current articles on this topic
+- "type": one of "news", "paper", "tutorial", "tool"
+
+Start with [ and end with ]`;
+
   try {
-    let all = [];
-    for (const url of RSS_FEEDS[cat.id]||[]) {
-      try {
-        const lt = body.querySelector(".loading-text");
-        if(lt) lt.textContent = `⟳ Fetching ${new URL(url).hostname}...`;
-        all = [...all, ...parseRSS(await fetchRSS(url), url)];
-      } catch(e) { console.warn("Feed failed:", url); }
-    }
-    if (!all.length) throw new Error("Could not load any RSS feeds.");
-    const seen = new Set();
-    all = all.filter(a => { if(seen.has(a.title)) return false; seen.add(a.title); return true; });
-    const lt = body.querySelector(".loading-text");
-    if(lt) lt.textContent = "⟳ AI selecting top stories...";
-    const list = all.slice(0,20).map((a,i)=>`${i}. "${a.title}" — ${a.desc.slice(0,150)}`).join("\n");
-    const raw = await callGroq([{role:"user",content:
-      `Pick the 5 most relevant articles for a robotics learner.\nArticles:\n${list}\n\nReturn ONLY a JSON array of 5 objects, no markdown.\nFormat: [{"index":<number>,"insight":"<one sentence why this matters>"}]\nStart with [ end with ]`}]);
+    const raw = await callGroq([{ role: "user", content: prompt }],
+      "You are a robotics knowledge curator. Return only valid JSON arrays. Be specific and technical.");
     const s = raw.indexOf("["), e = raw.lastIndexOf("]");
-    const picks = JSON.parse(raw.slice(s, e+1));
-    const final = picks.map(p=>({...all[p.index], insight:p.insight})).filter(i=>i?.title);
-    FEED_CACHE[cat.id] = final;
-    body.innerHTML = renderCards(final, cat);
+    if (s===-1||e===-1) throw new Error("Invalid response format. Retrying...");
+    const items = JSON.parse(raw.slice(s, e+1));
+    FEED_CACHE[cat.id] = items;
+    body.innerHTML = renderCards(items, cat);
   } catch(e) {
     body.innerHTML = `<div class="err">✕ ${e.message}</div>
       <button class="fetch-btn" style="background:${cat.color};color:#000;margin-top:4px" onclick="fetchFeed()">RETRY →</button>`;
@@ -209,20 +205,31 @@ async function fetchFeed() {
 }
 
 function renderCards(items, cat) {
-  return items.map((item,i)=>`
+  return items.map((item,i) => {
+    const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(item.searchQuery||item.title)}`;
+    const arxivUrl  = `https://arxiv.org/search/?searchtype=all&query=${encodeURIComponent(item.title)}`;
+    const typeColor = { news:"#00ff88", paper:"#00cfff", tutorial:"#ffaa00", tool:"#ff44aa" }[item.type] || cat.color;
+    return `
     <div class="feed-card" style="border-left:3px solid ${cat.color}">
       <div class="card-row">
-        <div class="card-title">${item.link?`<a href="${item.link}" target="_blank" rel="noopener">${item.title}</a>`:item.title}</div>
+        <div class="card-title">${item.title}</div>
         <button class="toggle-btn" style="color:${cat.color}" id="tog-${i}" onclick="toggleCard(${i})">▼</button>
       </div>
-      <div class="card-meta">${item.source||""}${item.date?" · "+item.date.slice(0,16):""}</div>
-      <div id="cbody-${i}" style="display:none">
-        ${item.desc?`<div class="card-summary">${item.desc}</div>`:""}
-        ${item.insight?`<div class="card-insight" style="color:${cat.color}">💡 ${item.insight}</div>`:""}
+      <div class="card-meta" style="color:${typeColor}33;background:${typeColor}11;display:inline-block;padding:2px 7px;border-radius:4px;margin-top:5px;font-size:9px;color:${typeColor}">
+        ${(item.type||"info").toUpperCase()}
       </div>
-    </div>`).join("")+`
+      <div class="card-body" id="cbody-${i}">
+        <div class="card-summary" style="margin-top:10px">${item.summary}</div>
+        <div class="card-insight" style="color:${cat.color}">💡 ${item.insight}</div>
+        <div class="card-links">
+          <a href="${searchUrl}" target="_blank" rel="noopener" class="card-link">🔍 Search Google</a>
+          ${item.type==="paper" ? `<a href="${arxivUrl}" target="_blank" rel="noopener" class="card-link">📄 Search arXiv</a>` : ""}
+        </div>
+      </div>
+    </div>`;
+  }).join("") + `
   <button class="refresh-btn" style="color:${cat.color};border:1px solid ${cat.color}44"
-    onclick="delete FEED_CACHE['${cat.id}'];fetchFeed()">↻ Refresh</button>`;
+    onclick="delete FEED_CACHE['${cat.id}'];fetchFeed()">↻ Regenerate</button>`;
 }
 
 function toggleCard(i) {
@@ -230,10 +237,11 @@ function toggleCard(i) {
   const open=b.style.display!=="block"; b.style.display=open?"block":"none"; t.textContent=open?"▲":"▼";
 }
 
+// ── RAG ────────────────────────────────────────────────────────────────────
 function renderRAG() {
-  const c=document.getElementById("content");
-  c.className="content fade-in";
-  c.innerHTML=`
+  const c = document.getElementById("content");
+  c.className = "content fade-in";
+  c.innerHTML = `
     <div style="margin-bottom:24px">
       <h2 style="font-family:'Space Mono',monospace;font-size:15px;color:#00cfff">🧠 KNOWLEDGE BASE</h2>
       <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#222;letter-spacing:2px;margin-top:4px">UPLOAD · CHUNK · INDEX · SEARCH · STRUCTURED NOTES</div>
@@ -248,7 +256,8 @@ function renderRAG() {
     <div id="doc-list"></div>
     <div class="rag-label" style="margin-top:20px">SEARCH KNOWLEDGE BASE</div>
     <div class="search-row">
-      <input class="search-input" id="rag-q" placeholder="Ask anything..." onkeydown="if(event.key==='Enter')doSearch()"/>
+      <input class="search-input" id="rag-q" placeholder="Ask anything about robotics or your documents..."
+        onkeydown="if(event.key==='Enter')doSearch()"/>
       <button class="search-btn" id="s-btn" onclick="doSearch()">SEARCH →</button>
     </div>
     <div id="rag-result"></div>`;
@@ -273,12 +282,20 @@ function chunkText(text,size=800,overlap=100){
 
 async function extractPDF(file){
   if(!window.pdfjsLib){
-    await new Promise((res,rej)=>{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";s.onload=res;s.onerror=rej;document.head.appendChild(s);});
+    await new Promise((res,rej)=>{
+      const s=document.createElement("script");
+      s.src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+      s.onload=res;s.onerror=rej;document.head.appendChild(s);
+    });
     pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
   }
   const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;
   let text="";
-  for(let i=1;i<=pdf.numPages;i++){const p=await pdf.getPage(i);const ct=await p.getTextContent();text+=ct.items.map(s=>s.str).join(" ")+"\n";}
+  for(let i=1;i<=pdf.numPages;i++){
+    const p=await pdf.getPage(i);
+    const ct=await p.getTextContent();
+    text+=ct.items.map(s=>s.str).join(" ")+"\n";
+  }
   return text;
 }
 
@@ -317,8 +334,10 @@ async function doSearch(){
   try{
     const chunks=retrieveChunks(query),hasCtx=chunks.length>0;
     const context=hasCtx?chunks.map((c,i)=>`[Source ${i+1} — ${c.docName}]\n${c.text}`).join("\n\n---\n\n"):"";
-    const system="You are a robotics knowledge assistant. Give structured answers with numbered points, key concepts explained simply, practical implications, and what to learn next.";
-    const userMsg=hasCtx?`Query: ${query}\n\nContext:\n${context}\n\nAnswer using the context.`:`Question: ${query}`;
+    const system="You are a robotics knowledge assistant. Give structured answers: numbered points, key concepts explained simply, practical implications, what to learn next.";
+    const userMsg=hasCtx
+      ?`Query: ${query}\n\nContext from documents:\n${context}\n\nAnswer using the context. Cite sources.`
+      :`Question: ${query}\n\nAnswer thoroughly from your knowledge about robotics and technology.`;
     const answer=await callGroq([{role:"user",content:userMsg}],system);
     const sources=[...new Set(chunks.map(c=>c.docName))];
     rd.innerHTML=`<div class="result-box">
