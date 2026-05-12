@@ -3,27 +3,28 @@ name: Deploy Robolab Intel
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:  # allows manual trigger from GitHub UI
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # needed to push to gh-pages branch
+      contents: write
 
     steps:
-      # Step 1: checkout your code
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Step 2: inject the Groq API key into index.html
-      # Replaces the placeholder text __GROQ_API_KEY__ with your actual key
-      # The key comes from GitHub Secrets — never visible in code
+      # Write key into a separate config.js file
+      # Avoids all sed/escaping issues with special characters in API keys
       - name: Inject API Key
         run: |
-          sed -i 's|__GROQ_API_KEY__|${{ secrets.GROQ_API_KEY }}|g' index.html
+          echo "window.GROQ_API_KEY = '${{ secrets.GROQ_API_KEY }}';" > config.js
 
-      # Step 3: deploy to GitHub Pages (gh-pages branch)
+      - name: Verify config created
+        run: |
+          echo "config.js bytes: $(wc -c < config.js)"
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
